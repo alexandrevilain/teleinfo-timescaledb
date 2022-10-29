@@ -1,0 +1,7 @@
+listenAdress: ":4000"
+db:
+  user: postgres
+  password: password
+  host: 127.0.0.1
+  name: timescaledb
+  disabletls: true
