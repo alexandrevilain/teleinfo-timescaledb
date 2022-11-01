@@ -3,15 +3,15 @@ package teleinfo
 import "strconv"
 
 const (
-	SubscribedIntensity = "ISOUSC"
-	InstantIntensity    = "IINST"
-	MaxIntensity        = "IMAX"
+	TotalEnergy      = "EAST"
+	InstantIntensity = "SINSTS"
+	MaxIntensity     = "PCOUP"
 )
 
 type Frame struct {
-	SubscribedIntensity int // ISOUSC
-	InstantIntensity    int // IINST
-	MaxIntensity        int // IMAX
+	InstantIntensity int // SINSTS
+	MaxIntensity     int // PCOUP
+	TotalEnergy      int // EAST (kwh)
 }
 
 type RawFrame map[string]string
@@ -42,8 +42,8 @@ func NewFrameFromRaw(r *RawFrame) *Frame {
 		f.MaxIntensity = maxIntensity
 	}
 
-	if subscribedIntensity, ok := r.GetIntField(SubscribedIntensity); ok {
-		f.SubscribedIntensity = subscribedIntensity
+	if subscribedIntensity, ok := r.GetIntField(TotalEnergy); ok {
+		f.TotalEnergy = subscribedIntensity
 	}
 
 	return f

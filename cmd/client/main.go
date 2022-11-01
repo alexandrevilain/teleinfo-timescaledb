@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/log"
 	teleinfo "github.com/j-vizcaino/goteleinfo"
@@ -67,6 +68,8 @@ func startClient() error {
 			continue
 		}
 
+		logger.V(1).Info("Got frames", "data", data)
+
 		u := url.URL{
 			Scheme: cfg.Server.Scheme,
 			Host:   cfg.Server.Host,
@@ -86,5 +89,7 @@ func startClient() error {
 		}
 
 		logger.Info(string(result))
+
+		time.Sleep(cfg.Teleinfo.Interval)
 	}
 }
