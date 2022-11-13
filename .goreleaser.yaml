@@ -3,19 +3,18 @@ before:
     - go mod tidy
 builds:
   - main: ./cmd/server
-    id: teleinfo-client
-    env:
-      - CGO_ENABLED=0
+    id: teleinfo-server
     goos:
       - linux
       - darwin
   - main: ./cmd/client
-    id: teleinfo-server
-    env:
-      - CGO_ENABLED=0
+    id: teleinfo-client
     goos:
       - linux
-      - darwin
+    goarm:
+      - 5
+      - 6
+      - 7
 checksum:
   name_template: 'checksums.txt'
 snapshot:
