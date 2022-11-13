@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/auth"
 	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/log"
 	teleinfo "github.com/j-vizcaino/goteleinfo"
 	"github.com/spf13/pflag"
@@ -76,13 +77,21 @@ func startClient() error {
 			Path:   cfg.Server.Path,
 		}
 
-		resp, err := http.Post(u.String(), "application/json", bytes.NewBuffer(data))
+		req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(data))
+		if err != nil {
+			logger.Error(err, "Error creating request")
+			continue
+		}
+		req.Header.Set(auth.TokenHeaderName, cfg.Server.Auth.Token)
+		req.Header.Set("Content-Type", "application/json")
+
+		res, err := http.DefaultClient.Do(req)
 		if err != nil {
 			logger.Error(err, "Error sending teleinfo frame")
 			continue
 		}
 
-		result, err := httputil.DumpResponse(resp, true)
+		result, err := httputil.DumpResponse(res, true)
 		if err != nil {
 			logger.Error(err, "Error dumping teleinfo frame response")
 			continue

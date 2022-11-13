@@ -5,3 +5,5 @@ db:
   host: 127.0.0.1
   name: timescaledb
   disabletls: true
+authorizedTokens:
+  - abcd

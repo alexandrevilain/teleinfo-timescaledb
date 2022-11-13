@@ -5,6 +5,7 @@ import (
 )
 
 type Config struct {
-	ListenAdress string          `koanf:"listenAdress"`
-	DB           database.Config `koanf:"db"`
+	ListenAdress     string          `koanf:"listenAdress"`
+	DB               database.Config `koanf:"db"`
+	AuthorizedTokens []string        `koanf:"authorizedTokens"`
 }

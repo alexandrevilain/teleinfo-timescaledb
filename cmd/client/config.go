@@ -18,6 +18,9 @@ type Config struct {
 		Host   string
 		Scheme string
 		Path   string
+		Auth   struct {
+			Token string
+		}
 	}
 }
 
@@ -29,6 +32,8 @@ func (c *Config) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&c.Server.Host, "server.host", "localhost:9000", "HTTP service host to send frames to")
 	fs.StringVar(&c.Server.Scheme, "server.scheme", "https", "HTTP service scheme to send frames to")
 	fs.StringVar(&c.Server.Path, "server.path", "/v1/frames", "HTTP service path to send frames to")
+	fs.StringVar(&c.Server.Auth.Token, "server.auth.token", "", "Authentication token")
+
 }
 
 // Validate checks validation of Config.

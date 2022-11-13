@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/alexandrevilain/teleinfo-timescaledb/cmd/server/handlers"
+	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/auth"
 	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/database"
 	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/log"
 )
@@ -47,10 +48,10 @@ func run() error {
 		}
 	}
 
-	dbConfig := database.Config{}
-	k.Unmarshal("db", &dbConfig)
+	cfg := &Config{}
+	k.Unmarshal("", cfg)
 
-	db, err := database.Open(dbConfig)
+	db, err := database.Open(cfg.DB)
 	if err != nil {
 		return fmt.Errorf("connecting to db: %w", err)
 	}
@@ -68,10 +69,11 @@ func run() error {
 			return nil
 		},
 	}))
+	e.Use(auth.Middleware(cfg.AuthorizedTokens))
 
 	if err := handlers.AddRoutes(logger, db, e); err != nil {
 		return err
 	}
 
-	return e.Start(k.String("listenAdress"))
+	return e.Start(cfg.ListenAdress)
 }
