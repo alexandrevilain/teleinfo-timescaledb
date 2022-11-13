@@ -43,7 +43,6 @@ go run ./cmd/client
 Données sauvegardées en brut: 
 
 - EAST (Energie active soutirée totale): Wh => total_active_energy
-- PCOUP (Puissance apparente de coupure): kVA => apparent_breaking_power 
 - SINSTS (Puissance apparente instantanée soutirée): VA => instant_apparent_power
 - SINSTI (Puissance apparente instantanée injectée): VA => instant_apparent_power_injected
 
