@@ -8,6 +8,18 @@ Note that code base is in English.
 
 🇬🇧🇬🇧🇬🇧 🇬🇧
 
+## Comment ça marche ?
+
+Ce projet fournis 2 binaires:
+- teleinfo-client 
+- teleinfo-server
+
+Le binaire `teleinfo-client` est fait pour tourner sur un RaspberryPi (ou n'importe quelle autre machine linux). Il doit être relié a un module teleinfo USB (comme [celui-ci](https://www.cartelectronic.fr/teleinfo-compteur-enedis/127-teleinfo-1-compteur-usb-lc.html)). 
+Le binaire `teleinfo-server` est fait pour tourner coté serveur et doit être connecté a une base de donnée postgres avec l'extension timescaledb.
+Le `teleinfo-client` envoie via HTTP les trames teleinfo au `teleinfo-server`.
+
+HTTP a été choisi pour cette v1 mais sera remplacé par MQTT dans le futur.
+
 
 ## Comment développer ?
 
