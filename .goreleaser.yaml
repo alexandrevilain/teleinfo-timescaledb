@@ -21,8 +21,14 @@ builds:
       - 7
 archives:
 - id: teleinfo-server
+  builds:
+    - teleinfo-server
+  name_template: "teleinfo-server_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}"
   allow_different_binary_count: true
 - id: teleinfo-client
+  builds:
+    - teleinfo-client
+  name_template: "teleinfo-client_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}"
   allow_different_binary_count: true
 checksum:
   name_template: 'checksums.txt'
