@@ -12,12 +12,13 @@ type Handlers struct {
 }
 
 func (h Handlers) Create(c echo.Context) error {
-	raw := &teleinfo.RawFrame{}
-	err := c.Bind(raw)
+	f := &teleinfo.RawFrame{}
+	err := c.Bind(f)
 	if err != nil {
 		return err
 	}
-	err = h.Service.Create(c.Request().Context(), raw)
+
+	err = h.Service.Create(c.Request().Context(), f)
 	if err != nil {
 		return err
 	}

@@ -9,6 +9,7 @@ import (
 
 func CreateLogger() (logr.Logger, error) {
 	zc := zap.NewProductionConfig()
+	zc.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 	zc.Level = zap.NewAtomicLevelAt(zapcore.Level(-2))
 	z, err := zc.Build()
 	if err != nil {

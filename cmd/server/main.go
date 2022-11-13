@@ -54,9 +54,6 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("connecting to db: %w", err)
 	}
-	defer func() {
-		db.Close()
-	}()
 
 	logger.Info("Starting server")
 

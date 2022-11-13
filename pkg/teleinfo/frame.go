@@ -1,50 +1,62 @@
 package teleinfo
 
-import "strconv"
-
-const (
-	TotalEnergy      = "EAST"
-	InstantIntensity = "SINSTS"
-	MaxIntensity     = "PCOUP"
+import (
+	"fmt"
+	"strconv"
+	"time"
 )
 
+type RawFrame struct {
+	TotalActiveEnergy            string `json:"EAST"`
+	InstantApparentPower         string `json:"SINSTS"`
+	InstantApparentInjectedPower string `json:"SINSTI"`
+}
+
+func (r *RawFrame) SetDefaults() {
+	if r.TotalActiveEnergy == "" {
+		r.TotalActiveEnergy = "0"
+	}
+
+	if r.InstantApparentPower == "" {
+		r.InstantApparentPower = "0"
+	}
+
+	if r.InstantApparentInjectedPower == "" {
+		r.InstantApparentInjectedPower = "0"
+	}
+}
+
+func (r *RawFrame) ToFrame() (*Frame, error) {
+	result := &Frame{}
+	var err error
+	result.TotalActiveEnergy, err = strconv.Atoi(r.TotalActiveEnergy)
+	if err != nil {
+		return nil, fmt.Errorf("can't cast TotalActiveEnergy to int: %w", err)
+	}
+
+	result.InstantApparentPower, err = strconv.Atoi(r.InstantApparentPower)
+	if err != nil {
+		return nil, fmt.Errorf("can't cast InstantApparentPower to int: %w", err)
+	}
+
+	result.InstantApparentInjectedPower, err = strconv.Atoi(r.InstantApparentInjectedPower)
+	if err != nil {
+		return nil, fmt.Errorf("can't cast InstantApparentInjectedPower to int: %w", err)
+	}
+
+	return result, nil
+}
+
 type Frame struct {
-	InstantIntensity int // SINSTS
-	MaxIntensity     int // PCOUP
-	TotalEnergy      int // EAST (kwh)
+	Time time.Time `gorm:"time"`
+	// TotalActiveEnergy in watt per hour
+	TotalActiveEnergy int `gorm:"total_active_energy"`
+	// InstantApparentPower in VA
+	InstantApparentPower int `gorm:"instant_apparent_power"`
+	// InstantApparentInjectedPower in VA
+	InstantApparentInjectedPower int `gorm:"instant_apparent_injected_power"`
 }
 
-type RawFrame map[string]string
-
-func (f RawFrame) GetStringField(name string) (string, bool) {
-	v, ok := f[name]
-	return v, ok
-}
-
-func (f RawFrame) GetIntField(name string) (int, bool) {
-	s, ok := f[name]
-	if !ok {
-		return 0, ok
-	}
-	num, err := strconv.ParseInt(s, 10, 32)
-	ok = err == nil
-	return int(num), ok
-}
-
-func NewFrameFromRaw(r *RawFrame) *Frame {
-	f := &Frame{}
-
-	if instantIntensity, ok := r.GetIntField(InstantIntensity); ok {
-		f.InstantIntensity = instantIntensity
-	}
-
-	if maxIntensity, ok := r.GetIntField(MaxIntensity); ok {
-		f.MaxIntensity = maxIntensity
-	}
-
-	if subscribedIntensity, ok := r.GetIntField(TotalEnergy); ok {
-		f.TotalEnergy = subscribedIntensity
-	}
-
-	return f
+func (f Frame) TableName() string {
+	return "teleinfo_frames"
 }

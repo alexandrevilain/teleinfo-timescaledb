@@ -2,43 +2,32 @@ package teleinfo
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/go-logr/logr"
-	"github.com/jmoiron/sqlx"
-)
-
-var (
-	createHyperTableStmt = `
-	CREATE TABLE IF NOT EXISTS teleinfo_data (
-		time TIMESTAMPTZ NOT NULL,
-		instant_intensity INTEGER,
-		max_intensity INTEGER,
-		total_energy INTEGER
-	);
-	SELECT create_hypertable('teleinfo_data', 'time', if_not_exists => TRUE);
-	`
+	"gorm.io/gorm"
 )
 
 type Store struct {
 	log logr.Logger
-	db  *sqlx.DB
+	db  *gorm.DB
 }
 
-func NewStore(log logr.Logger, db *sqlx.DB) (*Store, error) {
+func NewStore(log logr.Logger, db *gorm.DB) (*Store, error) {
 	s := &Store{log: log, db: db}
 	return s, s.init()
 }
 
 func (s *Store) init() error {
-	_, err := s.db.Exec(createHyperTableStmt)
-	return err
+	err := s.db.AutoMigrate(&Frame{})
+	if err != nil {
+		return fmt.Errorf("can't auto migrate Frame model: %w", err)
+	}
+	return s.db.Exec("SELECT create_hypertable(?, 'time', if_not_exists => TRUE)", Frame{}.TableName()).Error
 }
 
 func (s *Store) Create(ctx context.Context, frame *Frame) error {
-	_, err := s.db.Exec("INSERT INTO teleinfo_data (time, instant_intensity, max_intensity, total_energy) VALUES (now(), $1, $2, $3)",
-		frame.InstantIntensity,
-		frame.MaxIntensity,
-		frame.TotalEnergy,
-	)
-	return err
+	frame.Time = time.Now().UTC() // Always override data
+	return s.db.Create(frame).Error
 }

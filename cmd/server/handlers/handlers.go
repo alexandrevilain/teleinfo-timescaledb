@@ -4,11 +4,11 @@ import (
 	"github.com/alexandrevilain/teleinfo-timescaledb/cmd/server/handlers/v1/teleinfogrp"
 	"github.com/alexandrevilain/teleinfo-timescaledb/pkg/teleinfo"
 	"github.com/go-logr/logr"
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
-func AddRoutes(log logr.Logger, db *sqlx.DB, e *echo.Echo) error {
+func AddRoutes(log logr.Logger, db *gorm.DB, e *echo.Echo) error {
 	tiStore, err := teleinfo.NewStore(log, db)
 	if err != nil {
 		return err

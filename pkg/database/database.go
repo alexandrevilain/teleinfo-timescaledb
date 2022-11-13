@@ -3,8 +3,8 @@ package database
 import (
 	"net/url"
 
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 // Config is the required properties to use the database.
@@ -20,7 +20,7 @@ type Config struct {
 }
 
 // Open knows how to open a database connection based on the configuration.
-func Open(cfg Config) (*sqlx.DB, error) {
+func Open(cfg Config) (*gorm.DB, error) {
 	sslMode := "require"
 	if cfg.DisableTLS {
 		sslMode = "disable"
@@ -43,12 +43,16 @@ func Open(cfg Config) (*sqlx.DB, error) {
 		RawQuery: q.Encode(),
 	}
 
-	db, err := sqlx.Open("postgres", u.String())
+	db, err := gorm.Open(postgres.Open(u.String()), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	db.SetMaxIdleConns(cfg.MaxIdleConns)
-	db.SetMaxOpenConns(cfg.MaxOpenConns)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
 
 	return db, nil
 }

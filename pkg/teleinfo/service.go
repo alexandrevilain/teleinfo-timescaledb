@@ -17,6 +17,10 @@ func NewService(log logr.Logger, store *Store) *Service {
 }
 
 func (s *Service) Create(ctx context.Context, f *RawFrame) error {
-	frame := NewFrameFromRaw(f)
+	f.SetDefaults()
+	frame, err := f.ToFrame()
+	if err != nil {
+		return err
+	}
 	return s.store.Create(ctx, frame)
 }
