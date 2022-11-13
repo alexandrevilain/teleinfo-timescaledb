@@ -4,11 +4,13 @@ before:
 builds:
   - main: ./cmd/server
     id: teleinfo-server
+    binary: teleinfo-server
     goos:
       - linux
       - darwin
   - main: ./cmd/client
     id: teleinfo-client
+    binary: teleinfo-client
     goos:
       - linux
     goarch:
