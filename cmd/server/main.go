@@ -8,6 +8,7 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/pflag"
 
 	"github.com/alexandrevilain/teleinfo-timescaledb/cmd/server/handlers"
@@ -61,6 +62,16 @@ func run() error {
 
 	e := echo.New()
 	e.HideBanner = true
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogError:  true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			logger.Info("request", "URI", v.URI, "status", v.Status, "error", v.Error)
+			return nil
+		},
+	}))
+
 	if err := handlers.AddRoutes(logger, db, e); err != nil {
 		return err
 	}

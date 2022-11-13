@@ -13,7 +13,7 @@ var (
 		time TIMESTAMPTZ NOT NULL,
 		instant_intensity INTEGER,
 		max_intensity INTEGER,
-		total_energy INTEGER,
+		total_energy INTEGER
 	);
 	SELECT create_hypertable('teleinfo_data', 'time', if_not_exists => TRUE);
 	`
@@ -35,7 +35,7 @@ func (s *Store) init() error {
 }
 
 func (s *Store) Create(ctx context.Context, frame *Frame) error {
-	_, err := s.db.Exec("INSERT INTO teleinfo_data (time, instant_intensity, max_intensity,  total_energy) VALUES (now(), $1, $2, $3)",
+	_, err := s.db.Exec("INSERT INTO teleinfo_data (time, instant_intensity, max_intensity, total_energy) VALUES (now(), $1, $2, $3)",
 		frame.InstantIntensity,
 		frame.MaxIntensity,
 		frame.TotalEnergy,

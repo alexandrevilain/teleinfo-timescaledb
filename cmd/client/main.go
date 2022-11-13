@@ -68,12 +68,12 @@ func startClient() error {
 			continue
 		}
 
-		logger.V(1).Info("Got frames", "data", data)
+		logger.V(1).Info("Got frames", "data", string(data))
 
 		u := url.URL{
 			Scheme: cfg.Server.Scheme,
 			Host:   cfg.Server.Host,
-			Path:   cfg.Server.Scheme,
+			Path:   cfg.Server.Path,
 		}
 
 		resp, err := http.Post(u.String(), "application/json", bytes.NewBuffer(data))
